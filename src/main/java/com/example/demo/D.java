@@ -2,6 +2,7 @@ package com.example.demo;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpEntity;
+import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -38,10 +39,10 @@ public abstract class D {
     public static File download(String url, int threadNumber) throws Exception {
         Path file;
         HttpGet httpGet = new HttpGet(url);
-        List<FutureTask<Boolean>> tasks = new ArrayList<>();
+        List<FutureTask<Boolean>> tasks = new ArrayList<>(threadNumber);
         try (CloseableHttpResponse response = CLIENT.execute(httpGet)) {
             HttpEntity entity = response.getEntity();
-            if (response.getStatusLine().getStatusCode() != 200) {
+            if (response.getStatusLine().getStatusCode() != HttpStatus.SC_OK) {
                 throw new IllegalStateException("连接异常,StatusCode=" + response.getStatusLine().getStatusCode());
             }
             long length = entity.getContentLength();
@@ -66,7 +67,7 @@ public abstract class D {
                     get.addHeader("Range", "bytes=" + startPos + "-" + endPos);
                     CloseableHttpResponse execute = CLIENT.execute(get);
                     //206表示文件分段请求,而不是整个文件请求
-                    if (execute.getStatusLine().getStatusCode() != 206) {
+                    if (execute.getStatusLine().getStatusCode() != HttpStatus.SC_PARTIAL_CONTENT) {
                         throw new IllegalStateException("不支持断点下载");
                     }
                     InputStream is = execute.getEntity().getContent();
