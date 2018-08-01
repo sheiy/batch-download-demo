@@ -1,6 +1,14 @@
 package com.example.demo;
 
+import lombok.extern.slf4j.Slf4j;
+import org.apache.http.HttpEntity;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.junit.Before;
 import org.junit.Test;
+import org.slf4j.Logger;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -14,7 +22,13 @@ import java.util.Arrays;
 //@SpringBootTest
 public class DemoApplicationTests {
 
-    public static void main(String[] args) throws Exception {
+    @Test
+    public void download()throws Exception{
+        D.download("https://download.jetbrains.8686c.com/idea/ideaIU-2018.2.exe",4);
+    }
+
+    @Test
+    public void genCSV() throws Exception {
         Path path = Paths.get("d:", "test.csv");
 
         BufferedWriter writer = Files.newBufferedWriter(path);
